@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 
 class ProductController extends Controller
 {
@@ -43,11 +44,46 @@ class ProductController extends Controller
      * @param  StoreProductRequest  $request
      * @return RedirectResponse
      */
-    public function store(StoreProductRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        Product::create($request->validated());
+        // Product::create($request->validated());
+
+        // return redirect()->route('products.index')->with('success', 'produk telah ditambahkan!!');
+
+        // dd($request->all());
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'variant' => 'required',
+            'is_new' => 'boolean',
+            'image' => 'nullable|mimes:png,jpg,jpeg,webp|max:2048',
+        ]);
+        $filename = NULL;
+        $path = NULL;
+
+        if($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalName();    
+    
+            $filename = time() . '.' . $extension;
+    
+            
+            $file->move(public_path('/assets/image'), $filename);
+        }
+
+        product::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'variant' => $request->variant,
+            'is_new' => $request->is_new == true ? 1:0,
+            'image' => $filename,
+        ]);
 
         return redirect()->route('products.index')->with('success', 'produk telah ditambahkan!!');
+            
     }
 
     /**
@@ -58,6 +94,7 @@ class ProductController extends Controller
      */
     public function edit(Product $product): View
     {
+        $products = Product::findOrFail($id);
         return view('products.edit', compact('product'));
     }
 
@@ -68,9 +105,44 @@ class ProductController extends Controller
      * @param  Product  $product
      * @return RedirectResponse
      */
-    public function update(UpdateProductRequest $request, Product $product): RedirectResponse
+    public function update(Request $request, int $id): RedirectResponse
     {
-        $product->update($request->validated());
+        // $product->update($request->validated());
+
+        // return redirect()->route('products.index')->with('success', 'Produk Sukses Diupdate!!');
+
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'price' => 'required|numeric|min:0',
+            'variant' => 'required',
+            'is_new' => 'booleand',
+            'image' => 'nullable|mimes:png,jpg,jpeg,webp',
+        ]);
+
+        $products = product::findOrFail($id);
+
+        if($request->hasFile('image')) {
+            $file = $request->file('image');
+            $extension = $file->getClientOriginaExtension();
+
+            $filename = time() . '.' . $extension;
+
+            $path = public_path('uploads/products');
+            $file->move($path, $filename);
+
+            if(File::exists($products->image)) {
+                File::delete($products->image);
+            }
+        }
+        $products->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'price' => $request->price,
+            'variant' => $request->variant,
+            'is_new' => $request->is_new == true ? 1:0,
+            'image' => $path.$filename,
+        ]);
 
         return redirect()->route('products.index')->with('success', 'Produk Sukses Diupdate!!');
     }
@@ -81,10 +153,16 @@ class ProductController extends Controller
      * @param  Product  $product
      * @return RedirectResponse
      */
-    public function destroy(Product $product): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
-        $product->delete();
+        // $product->delete();
 
+        // return redirect()->route('products.index')->with('success', 'produk telah dihapus!!');
+        $products = product::findOrFail($id);
+        if(File::exists($products->image)) {
+            File::delete($products->image);
+        }
+        $products->delete();
         return redirect()->route('products.index')->with('success', 'produk telah dihapus!!');
     }
 

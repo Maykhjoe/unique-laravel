@@ -39,8 +39,8 @@
         </div>
 
         <div class="form-group">
-            <label for="image_url">Image URL:</label>
-            <input type="text" class="form-control" name="image_url" id="image_url" value="{{ old('image_url') }}">
+            <label for="image">Product Image:</label>
+            <input type="file" name="image" id="image" class="form-control-file">
         </div>
 
 

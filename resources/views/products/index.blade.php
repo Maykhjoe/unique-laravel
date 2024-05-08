@@ -52,7 +52,9 @@
                             <td>{{ $product->price }}</td>
                             <td>{{ $product->variant }}</td>
                             <td>{{ $product->is_new }}</td>
-                            <td>{{ $product->image }}</td>
+                            <td>
+                                <img src="{{ asset($product->image) }}" style="width: 70px; height:70px;" alt="Img" />
+                            </td>
                             <td>
                                 <a href="{{ route('products.edit', $product) }}">Edit</a>
         
