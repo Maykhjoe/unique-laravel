@@ -1,0 +1,14 @@
+/* Custom styling for the back button */
+.btn-back {
+    /* Add your custom styles here */
+    /* For example: */
+    margin-right: 10px; /* Add some margin to separate it from other elements */
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-back:hover {
+    /* Add hover styles if needed */
+    background-color: #5a6268;
+    border-color: #5a6268;
+}
