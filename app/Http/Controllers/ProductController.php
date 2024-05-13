@@ -58,19 +58,22 @@ class ProductController extends Controller
             'price' => 'required|numeric|min:0',
             'variant' => 'required',
             'is_new' => 'boolean',
-            'image' => 'nullable|mimes:png,jpg,jpeg,webp|max:2048',
+            'image' => 'nullable|mimes:png,jpg,jpeg,webp|max:2048|required',
         ]);
         $filename = NULL;
         $path = NULL;
 
-        if($request->hasFile('image')) {
+        if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $extension = $file->getClientOriginalName();    
-    
+            $extension = $file->getClientOriginalExtension();    
+
             $filename = time() . '.' . $extension;
-    
-            
+
+            // Move the file to the desired location
             $file->move(public_path('/assets/image'), $filename);
+
+            // Store the image path in the database
+            $path = '/assets/image/' . $filename;
         }
 
         product::create([
@@ -163,7 +166,8 @@ class ProductController extends Controller
             File::delete($products->image);
         }
         $products->delete();
-        return redirect()->route('products.index')->with('success', 'produk telah dihapus!!');
+        return redirect()->route('products.index')->with('success', 'produk ' . $products->name . ' telah dihapus!!');
+
     }
 
     public function getProductsData(): Response

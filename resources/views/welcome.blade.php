@@ -3,7 +3,7 @@
 @section('content')
 <main>
     <div>
- <a href="{{ route('products.index') }}"> product</a>
+ <a class="text-center text-3xl" href=" {{ route('products.index') }}"> product</a>
     </div>
 </main>
 @endsection
