@@ -17,8 +17,8 @@ return new class extends Migration
             $table->text('description');
             $table->decimal('price', 8, 2);
             $table->string('variant');
-            $table->boolean('is_new')->default(false);
-            $table->string('image')->nullable();
+            $table->string('is_new');
+            $table->string('image');
             $table->timestamps();
         });
     }

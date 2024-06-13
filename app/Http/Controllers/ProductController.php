@@ -8,6 +8,7 @@ use App\Models\Product;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
 
@@ -46,46 +47,26 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        // Product::create($request->validated());
-
-        // return redirect()->route('products.index')->with('success', 'produk telah ditambahkan!!');
-
-        // dd($request->all());
-
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric|min:0',
             'variant' => 'required',
-            'is_new' => 'boolean',
-            'image' => 'nullable|mimes:png,jpg,jpeg,webp|max:2048|required',
+            'is_new' => 'nullable|boolean',
+            'image' => 'required|string', // Validation for image file
         ]);
-        $filename = NULL;
-        $path = NULL;
-
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalExtension();    
-
-            $filename = time() . '.' . $extension;
-
-            // Move the file to the desired location
-            $file->move(public_path('/assets/image'), $filename);
-
-            // Store the image path in the database
-            $path = '/assets/image/' . $filename;
-        }
-
+    
+        
         product::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
             'variant' => $request->variant,
-            'is_new' => $request->is_new == true ? 1:0,
-            'image' => $filename,
+            'is_new' => $request->has('is_new') ? 'New' : 'Old',
+            'image' => $request->image, // Store the image path as a string
         ]);
-
-        return redirect()->route('products.index')->with('success', 'produk telah ditambahkan!!');
+        
+        return redirect()->route('products.index')->with('success', 'Produk telah ditambahkan!!');
             
     }
 
@@ -95,11 +76,13 @@ class ProductController extends Controller
      * @param  Product  $product
      * @return View
      */
-    public function edit(Product $product): View
+    public function edit($id)
     {
-        $products = Product::findOrFail($id);
-        return view('products.edit', compact('product'));
+        $products = Product::all();
+        $product = Product::findOrFail($id);
+        return view('products.edit', compact('product', 'products'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -108,47 +91,30 @@ class ProductController extends Controller
      * @param  Product  $product
      * @return RedirectResponse
      */
-    public function update(Request $request, int $id): RedirectResponse
-    {
-        // $product->update($request->validated());
+    public function update(Request $request, $id): RedirectResponse
+{
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'description' => 'required|string',
+        'price' => 'required|numeric|min:0',
+        'variant' => 'required',
+        'is_new' => 'boolean',
+        'image' => 'required|string', // Validation for image file
+    ]);
 
-        // return redirect()->route('products.index')->with('success', 'Produk Sukses Diupdate!!');
+    $product = Product::findOrFail($id);
+    $product->update([
+        'name' => $request->name,
+        'description' => $request->description,
+        'price' => $request->price,
+        'variant' => $request->variant,
+        'is_new' => $request->is_new == true ? 1 : 0,
+        'image' => $request->image, // Store the image path as a string
+    ]);
 
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'price' => 'required|numeric|min:0',
-            'variant' => 'required',
-            'is_new' => 'booleand',
-            'image' => 'nullable|mimes:png,jpg,jpeg,webp',
-        ]);
+    return redirect()->route('products.index')->with('success', 'Produk telah diperbarui!!');
+}
 
-        $products = product::findOrFail($id);
-
-        if($request->hasFile('image')) {
-            $file = $request->file('image');
-            $extension = $file->getClientOriginaExtension();
-
-            $filename = time() . '.' . $extension;
-
-            $path = public_path('uploads/products');
-            $file->move($path, $filename);
-
-            if(File::exists($products->image)) {
-                File::delete($products->image);
-            }
-        }
-        $products->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'price' => $request->price,
-            'variant' => $request->variant,
-            'is_new' => $request->is_new == true ? 1:0,
-            'image' => $path.$filename,
-        ]);
-
-        return redirect()->route('products.index')->with('success', 'Produk Sukses Diupdate!!');
-    }
 
     /**
      * Remove the specified resource from storage.
@@ -170,10 +136,17 @@ class ProductController extends Controller
 
     }
 
-    public function getProductsData(): Response
-    {
-        $products = Product::all();
+    public function getProductsData(): JsonResponse
+{
+    $products = Product::all();
 
-    return (new Response(response()->json(['products' => $products], 200), 200))->header('Content-Type', 'application/json');
-    }
+    return response()->json(['products' => $products]);
+}
+
+public function selectProduct()
+{
+    $products = Product::all();
+    return view('products.select', compact('products'));
+}
+
 }

@@ -38,13 +38,14 @@
 
         <div class="mb-4">
             <input type="checkbox" class="form-checkbox" name="is_new" id="is_new" value="1" {{ old('is_new') ? 'checked' : '' }}>
-            <label class="ml-2" for="is_new">Is New</label>
+            <label class="ml-2" for="is_new">New Product?</label>
         </div>
 
         <div class="mb-4">
             <label for="image" class="block mb-2">Product Image:</label>
-            <input type="file" name="image" id="image" class="form-input border border-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300">
+            <input type="text" class="form-input border border-gray-300 focus:outline-none focus:ring-0 focus:border-gray-300 w-full" name="image" id="image" value="{{ old('image') }}" required>
         </div>
+
 
         <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             Create

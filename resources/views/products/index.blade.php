@@ -19,37 +19,35 @@
         </div>
     @endif
 
-    <div class="container mx-auto">
+    <div class="container mx-auto p-4">
         <div class="overflow-x-auto">
-            <table class="table-auto w-full border-collapse border border-gray-500">
+            <table class="table-auto w-full border-collapse border border-gray-300">
                 <thead>
                     <tr>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Name</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Description</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Price</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Variant</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Is New</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Image</th>
-                        <th class="px-4 py-2 bg-gray-200 border border-gray-500">Actions</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Name</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Description</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Price</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Variant</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Is New</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Image</th>
+                        <th class="px-6 py-3 bg-gray-100 border border-gray-300 text-left text-sm font-medium text-gray-700">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach ($products as $product)
-                        <tr>
-                            <td class="px-4 py-2 border border-gray-500">{{ $product->name }}</td>
-                            <td class="px-4 py-2 border border-gray-500">{{ $product->description }}</td>
-                            <td class="px-4 py-2 border border-gray-500">{{ $product->price }}</td>
-                            <td class="px-4 py-2 border border-gray-500">{{ $product->variant }}</td>
-                            <td class="px-4 py-2 border border-gray-500">{{ $product->is_new }}</td>
-                            <td class="px-4 py-2 border border-gray-500">
-                                <img src="{{ asset('assets/image/' . $product->image) }}" class="w-16 h-16" alt="image">
-                            </td>
-                            <td class="px-4 py-2 border border-gray-500">
-                                <a href="{{ route('products.edit', $product) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2">Edit</a>
-                                <form method="POST" action="{{ route('products.destroy', $product) }}" class="inline">
+                        <tr class="bg-white even:bg-gray-50">
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->name }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->description }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->price }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->variant }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->is_new }}</td>
+                            <td class="px-6 py-4 border border-gray-300 text-sm text-gray-700">{{ $product->image }}</td>
+                            <td class="px-10 py-4 border border-gray-300 text-sm text-gray-700">
+                                <a href="{{ route('products.edit', $product) }}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded mr-2">Edit</a>
+                                <form method="POST" action="{{ route('products.destroy', $product) }}" class="inline ml-2">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">Delete</button>
+                                    <button type="submit" class="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">Delete</button>
                                 </form>
                             </td>
                         </tr>
@@ -58,6 +56,7 @@
             </table>
         </div>
     </div>
+    
 
     <script>
         // Function to dismiss the alert after a specified duration
